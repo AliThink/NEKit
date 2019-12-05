@@ -177,6 +177,8 @@ public class SOCKS5ProxySocket: ProxySocket {
             }
             
             destinationHost = String(data: address, encoding: .utf8)
+            
+            NSLog("*******----====\(destinationHost)")
 
             readStatus = .readingPort
             socket.readDataTo(length: 2)
@@ -202,7 +204,11 @@ public class SOCKS5ProxySocket: ProxySocket {
         case .readingPort:
             data.withUnsafeBytes {
                 destinationPort = Int($0.load(as: UInt16.self).bigEndian)
+                
+                NSLog("*******----====\(destinationPort)---\(destinationHost)")
             }
+            
+            NSLog("*******----====receive")
 
             readStatus = .forwarding
             session = ConnectSession(host: destinationHost, port: destinationPort)
