@@ -123,7 +123,7 @@ public class SOCKS5ProxySocket: ProxySocket {
 //                    return
 //                }
 
-                NSLog("--------\(Int(p.baseAddress!.successor().pointee))")
+                NSLog("--------1\(Int(p.baseAddress!.successor().pointee))")
                 
                 self.readStatus = .readingMethods
                 self.socket.readDataTo(length: Int(p.baseAddress!.successor().pointee))
@@ -142,19 +142,26 @@ public class SOCKS5ProxySocket: ProxySocket {
             data.withUnsafeBytes { pointer in
                 let p = pointer.bindMemory(to: Int8.self)
                 
+                NSLog("============>\(p.baseAddress!.pointee)----\(p.baseAddress!.successor().pointee)")
+                
                 guard p.baseAddress!.pointee == 5 && p.baseAddress!.successor().pointee == 1 else {
                     // TODO: notify observer
+                    NSLog("============>inside exit")
+                    
                     self.disconnect()
                     return
                 }
                 switch p.baseAddress!.advanced(by: 3).pointee {
                 case 1:
+                    NSLog("============>readingIPv4Address")
                     readStatus = .readingIPv4Address
                     socket.readDataTo(length: 4)
                 case 3:
+                    NSLog("============>readingDomainLength")
                     readStatus = .readingDomainLength
                     socket.readDataTo(length: 1)
                 case 4:
+                    NSLog("============>readingIPv6Address")
                     readStatus = .readingIPv6Address
                     socket.readDataTo(length: 16)
                 default:
