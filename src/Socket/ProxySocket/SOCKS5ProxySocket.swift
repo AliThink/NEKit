@@ -107,6 +107,7 @@ public class SOCKS5ProxySocket: ProxySocket {
         case .forwarding:
             delegate?.didRead(data: data, from: self)
         case .readingVersionIdentifierAndNumberOfMethods:
+            print("--------readingVersionIdentifierAndNumberOfMethods-------")
             data.withUnsafeBytes { pointer in
                 let p = pointer.bindMemory(to: Int8.self)
                 
@@ -127,21 +128,23 @@ public class SOCKS5ProxySocket: ProxySocket {
             }
         case .readingMethods:
             // TODO: check for 0x00 in read data
-
+            print("--------readingMethods-------")
+            
             let response = Data([0x05, 0x00])
             // we would not be able to read anything before the data is written out, so no need to handle the dataWrote event.
             write(data: response)
             readStatus = .readingConnectHeader
             socket.readDataTo(length: 4)
         case .readingConnectHeader:
+            print("--------readingConnectHeader-------")
             data.withUnsafeBytes { pointer in
                 let p = pointer.bindMemory(to: Int8.self)
                 
-                guard p.baseAddress!.pointee == 5 && p.baseAddress!.successor().pointee == 1 else {
-                    // TODO: notify observer
-                    self.disconnect()
-                    return
-                }
+//                guard p.baseAddress!.pointee == 5 && p.baseAddress!.successor().pointee == 1 else {
+//                    // TODO: notify observer
+//                    self.disconnect()
+//                    return
+//                }
                 switch p.baseAddress!.advanced(by: 3).pointee {
                 case 1:
                     readStatus = .readingIPv4Address
