@@ -107,7 +107,7 @@ public class SOCKS5ProxySocket: ProxySocket {
         case .forwarding:
             delegate?.didRead(data: data, from: self)
         case .readingVersionIdentifierAndNumberOfMethods:
-            print("--------readingVersionIdentifierAndNumberOfMethods-------")
+//            print("--------readingVersionIdentifierAndNumberOfMethods-------")
             data.withUnsafeBytes { pointer in
                 let p = pointer.bindMemory(to: Int8.self)
                 
@@ -123,14 +123,14 @@ public class SOCKS5ProxySocket: ProxySocket {
 //                    return
 //                }
 
-                NSLog("--------1\(Int(p.baseAddress!.successor().pointee))")
+//                NSLog("--------1\(Int(p.baseAddress!.successor().pointee))")
                 
                 self.readStatus = .readingMethods
                 self.socket.readDataTo(length: Int(p.baseAddress!.successor().pointee))
             }
         case .readingMethods:
             // TODO: check for 0x00 in read data
-            print("--------readingMethods-------")
+//            print("--------readingMethods-------")
             
             let response = Data([0x05, 0x00])
             // we would not be able to read anything before the data is written out, so no need to handle the dataWrote event.
@@ -138,30 +138,30 @@ public class SOCKS5ProxySocket: ProxySocket {
             readStatus = .readingConnectHeader
             socket.readDataTo(length: 4)
         case .readingConnectHeader:
-            print("--------readingConnectHeader-------")
+//            print("--------readingConnectHeader-------")
             data.withUnsafeBytes { pointer in
                 let p = pointer.bindMemory(to: Int8.self)
                 
-                NSLog("============>\(p.baseAddress!.pointee)----\(p.baseAddress!.successor().pointee)")
+//                NSLog("============>\(p.baseAddress!.pointee)----\(p.baseAddress!.successor().pointee)")
                 
                 guard p.baseAddress!.pointee == 5 && p.baseAddress!.successor().pointee == 1 else {
                     // TODO: notify observer
-                    NSLog("============>inside exit")
+//                    NSLog("============>inside exit")
                     
                     self.disconnect()
                     return
                 }
                 switch p.baseAddress!.advanced(by: 3).pointee {
                 case 1:
-                    NSLog("============>readingIPv4Address")
+//                    NSLog("============>readingIPv4Address")
                     readStatus = .readingIPv4Address
                     socket.readDataTo(length: 4)
                 case 3:
-                    NSLog("============>readingDomainLength")
+//                    NSLog("============>readingDomainLength")
                     readStatus = .readingDomainLength
                     socket.readDataTo(length: 1)
                 case 4:
-                    NSLog("============>readingIPv6Address")
+//                    NSLog("============>readingIPv6Address")
                     readStatus = .readingIPv6Address
                     socket.readDataTo(length: 16)
                 default:
@@ -178,7 +178,7 @@ public class SOCKS5ProxySocket: ProxySocket {
             
             destinationHost = String(data: address, encoding: .utf8)
             
-            NSLog("*******----====\(destinationHost)")
+//            NSLog("*******----====\(destinationHost)")
 
             readStatus = .readingPort
             socket.readDataTo(length: 2)
@@ -206,10 +206,10 @@ public class SOCKS5ProxySocket: ProxySocket {
             data.withUnsafeBytes {
                 destinationPort = Int($0.load(as: UInt16.self).bigEndian)
                 
-                NSLog("*******----====\(destinationPort)---\(destinationHost)")
+//                NSLog("*******----====\(destinationPort)---\(destinationHost)")
             }
             
-            NSLog("*******----====receive")
+//            NSLog("*******----====receive")
 
             readStatus = .forwarding
             session = ConnectSession(host: destinationHost, port: destinationPort)
