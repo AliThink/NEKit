@@ -199,6 +199,7 @@ public class SOCKS5ProxySocket: ProxySocket {
             socket.readDataTo(length: Int(data.first!))
         case .readingDomain:
             destinationHost = String(data: data, encoding: .utf8)
+            destinationHost = destinationHost.characters.split{$0 == "\\"}.map(String.init)[0]
             readStatus = .readingPort
             socket.readDataTo(length: 2)
         case .readingPort:
