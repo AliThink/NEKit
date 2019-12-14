@@ -111,11 +111,11 @@ public class SOCKS5ProxySocket: ProxySocket {
             data.withUnsafeBytes { pointer in
                 let p = pointer.bindMemory(to: Int8.self)
                 
-//                guard p.baseAddress!.pointee == 5 else {
-//                    // TODO: notify observer
-//                    self.disconnect()
-//                    return
-//                }
+                guard p.baseAddress!.pointee == 5 else {
+                    // TODO: notify observer
+                    self.disconnect()
+                    return
+                }
 //
 //                guard p.baseAddress!.successor().pointee > 0 else {
 //                    // TODO: notify observer
@@ -130,7 +130,7 @@ public class SOCKS5ProxySocket: ProxySocket {
             }
         case .readingMethods:
             // TODO: check for 0x00 in read data
-//            print("--------readingMethods-------")
+            print("--------readingMethods-------")
             
             let response = Data([0x05, 0x00])
             // we would not be able to read anything before the data is written out, so no need to handle the dataWrote event.
