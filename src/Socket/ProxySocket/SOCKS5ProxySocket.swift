@@ -69,6 +69,10 @@ public class SOCKS5ProxySocket: ProxySocket {
 
     private var readStatus: SOCKS5ProxyReadStatus = .invalid
     private var writeStatus: SOCKS5ProxyWriteStatus = .invalid
+    
+    private var exist_hosts: [String] = []
+    
+    private var read_methods_count = 0
 
     public var readStatusDescription: String {
         return readStatus.description
@@ -117,11 +121,11 @@ public class SOCKS5ProxySocket: ProxySocket {
                     return
                 }
 //
-//                guard p.baseAddress!.successor().pointee > 0 else {
-//                    // TODO: notify observer
-//                    self.disconnect()
-//                    return
-//                }
+                guard p.baseAddress!.successor().pointee > 0 else {
+                    // TODO: notify observer
+                    self.disconnect()
+                    return
+                }
 
 //                NSLog("--------1\(Int(p.baseAddress!.successor().pointee))")
                 
@@ -130,13 +134,36 @@ public class SOCKS5ProxySocket: ProxySocket {
             }
         case .readingMethods:
             // TODO: check for 0x00 in read data
-            print("--------readingMethods-------")
+//            print("--------readingMethods-------")
             
+//            data.withUnsafeBytes { pointer in
+//                let p = pointer.bindMemory(to: Int8.self)
+//
+//                let response = Data([0x05, 0x00])
+//
+//                write(data: response)
+//
+////                if p.baseAddress!.pointee == 0 {
+////                    // TODO: notify observer
+////
+////                    readStatus = .readingMethods
+////                    socket.readDataTo(length:  Int(p.baseAddress!.successor().pointee))
+////
+////                } else {
+////
+////                }
+//
+//                readStatus = .readingConnectHeader
+//                socket.readDataTo(length: 4)
+//
+//            }
             let response = Data([0x05, 0x00])
             // we would not be able to read anything before the data is written out, so no need to handle the dataWrote event.
             write(data: response)
+
             readStatus = .readingConnectHeader
             socket.readDataTo(length: 4)
+
         case .readingConnectHeader:
 //            print("--------readingConnectHeader-------")
             data.withUnsafeBytes { pointer in
@@ -144,13 +171,13 @@ public class SOCKS5ProxySocket: ProxySocket {
                 
 //                NSLog("============>\(p.baseAddress!.pointee)----\(p.baseAddress!.successor().pointee)")
                 
-//                guard p.baseAddress!.pointee == 5 && p.baseAddress!.successor().pointee == 1 else {
-//                    // TODO: notify observer
-////                    NSLog("============>inside exit")
-//
-//                    self.disconnect()
-//                    return
-//                }
+                guard p.baseAddress!.pointee == 5 && p.baseAddress!.successor().pointee == 1 else {
+                    // TODO: notify observer
+//                    NSLog("============>inside exit")
+
+                    self.disconnect()
+                    return
+                }
                 switch p.baseAddress!.advanced(by: 3).pointee {
                 case 1:
 //                    NSLog("============>readingIPv4Address")
@@ -176,7 +203,7 @@ public class SOCKS5ProxySocket: ProxySocket {
                 }
             }
             
-            destinationHost = String(data: address, encoding: .utf8)
+            destinationHost = String(data: address, encoding: .utf8)!.replacingOccurrences(of: "\0", with: "", options: .literal, range: nil)
             
 //            NSLog("*******----====\(destinationHost)")
 
@@ -199,7 +226,6 @@ public class SOCKS5ProxySocket: ProxySocket {
             socket.readDataTo(length: Int(data.first!))
         case .readingDomain:
             destinationHost = String(data: data, encoding: .utf8)
-            destinationHost = destinationHost.split{$0 == "\0"}.map(String.init)[0]
             readStatus = .readingPort
             socket.readDataTo(length: 2)
         case .readingPort:
@@ -210,11 +236,22 @@ public class SOCKS5ProxySocket: ProxySocket {
             }
             
 //            NSLog("*******----====receive")
+            
+//            let response = Data([0x05, 0x00, 0x01, 0x01, 0x7f, 0x00, 0x00, 0x01, 0x00, 0x04, 0x3e])
+//            write(data: response)
 
+            
+            
+//            let response = Data([0x05, 0x00])
+//            write(data: response)
+//            socket.readDataTo(length: 1)
             readStatus = .forwarding
+            
             session = ConnectSession(host: destinationHost, port: destinationPort)
             observer?.signal(.receivedRequest(session!, on: self))
             delegate?.didReceive(session: session!, from: self)
+            
+            
         default:
             return
         }
@@ -247,6 +284,9 @@ public class SOCKS5ProxySocket: ProxySocket {
      - parameter adapter: The `AdapterSocket`.
      */
     override public func respondTo(adapter: AdapterSocket) {
+        
+        // 三次后断掉连接
+        
         super.respondTo(adapter: adapter)
 
         guard !isCancelled else {
@@ -256,6 +296,7 @@ public class SOCKS5ProxySocket: ProxySocket {
         var responseBytes = [UInt8](repeating: 0, count: 10)
         responseBytes[0...3] = [0x05, 0x00, 0x00, 0x01]
         let responseData = Data(responseBytes)
+
 
         writeStatus = .sendingResponse
         write(data: responseData)

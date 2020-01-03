@@ -85,6 +85,7 @@ open class ProxySocket: NSObject, SocketProtocol, RawTCPSocketDelegate {
         }
 
         socket.write(data: data)
+        
     }
 
     /**

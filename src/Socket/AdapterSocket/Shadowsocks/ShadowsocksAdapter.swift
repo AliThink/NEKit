@@ -50,6 +50,7 @@ public class ShadowsocksAdapter: AdapterSocket {
 
         do {
             internalStatus = .connecting
+                        
             try socket.connectTo(host: host, port: port, enableTLS: false, tlsSettings: nil)
         } catch let error {
             observer?.signal(.errorOccured(error, on: self))

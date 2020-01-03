@@ -42,6 +42,8 @@ public class Tunnel: NSObject, SocketDelegate {
     
     var observer: Observer<TunnelEvent>?
     
+    private var exist_hosts: [String] = []
+    
     /// Indicating how many socket is ready to forward data.
     private var readySignal = 0
     
@@ -98,6 +100,8 @@ public class Tunnel: NSObject, SocketDelegate {
      Close the tunnel elegantly.
      */
     func close() {
+        // 断开
+        
         observer?.signal(.closeCalled(self))
         
         guard !self.isCancelled else {
@@ -161,8 +165,11 @@ public class Tunnel: NSObject, SocketDelegate {
                 }
             }
         } else {
-            session.ipAddress = session.host
-            openAdapter(for: session)
+            if !exist_hosts.contains(session.host) {
+                exist_hosts.append(session.host)
+                session.ipAddress = session.host
+                openAdapter(for: session)
+            }
         }
     }
     
@@ -173,6 +180,7 @@ public class Tunnel: NSObject, SocketDelegate {
         
         let manager = RuleManager.currentManager
         let factory = manager.match(session)!
+        
         adapterSocket = factory.getAdapterFor(session: session)
         adapterSocket!.delegate = self
         adapterSocket!.openSocketWith(session: session)
@@ -193,12 +201,23 @@ public class Tunnel: NSObject, SocketDelegate {
         }
         if readySignal == 2 {
             _status = .forwarding
+            
+            
+            
+//            String(format: "%0X", number)
+            
+//            let response = Data([0x05, 0x00, 0x01, 0x01, 0x22, 0xdd, 0x47, 0x2c, 0x00, 0x2a, 0x9d])
+//            proxySocket.write(data: response)
+            
+            
             proxySocket.readData()
             adapterSocket?.readData()
         }
     }
     
     public func didDisconnectWith(socket: SocketProtocol) {
+        // 会断开会断开。。。
+        
         if !isCancelled {
             _stopForwarding = true
             close()

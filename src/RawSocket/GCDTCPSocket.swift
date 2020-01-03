@@ -221,10 +221,13 @@ open class GCDTCPSocket: NSObject, GCDAsyncSocketDelegate, RawTCPSocketProtocol 
     }
 
     open func socket(_ sock: GCDAsyncSocket, didRead data: Data, withTag tag: Int) {
+        let data_str = String(decoding: data, as: UTF8.self)
         delegate?.didRead(data: data, from: self)
     }
 
     open func socketDidDisconnect(_ socket: GCDAsyncSocket, withError err: Error?) {
+        print("error error error===============\(err.debugDescription)")
+        
         delegate?.didDisconnectWith(socket: self)
         delegate = nil
         socket.setDelegate(nil, delegateQueue: nil)

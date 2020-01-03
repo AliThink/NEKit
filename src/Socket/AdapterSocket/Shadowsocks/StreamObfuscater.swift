@@ -49,6 +49,8 @@ extension ShadowsocksAdapter {
             private var requestSend = false
 
             private func requestData(withData data: Data) -> Data {
+                
+
                 let hostLength = session.host.utf8.count
                 let length = 1 + 1 + hostLength + 2 + data.count
                 var response = Data(count: length)
