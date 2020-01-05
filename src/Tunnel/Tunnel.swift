@@ -165,11 +165,9 @@ public class Tunnel: NSObject, SocketDelegate {
                 }
             }
         } else {
-            if !exist_hosts.contains(session.host) {
-                exist_hosts.append(session.host)
-                session.ipAddress = session.host
-                openAdapter(for: session)
-            }
+            
+            session.ipAddress = session.host
+            openAdapter(for: session)
         }
     }
     
