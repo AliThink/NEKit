@@ -288,6 +288,7 @@
 		36E9CD001DD6EEF5003597CE /* QueueFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36E9CCFE1DD6EEF5003597CE /* QueueFactory.swift */; };
 		36E9CD041DD6F0DE003597CE /* Resolver.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 360F392B1DD2068E002BED59 /* Resolver.framework */; };
 		36E9CD051DD6F0DE003597CE /* Resolver.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 360F392B1DD2068E002BED59 /* Resolver.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		BBD0008E23C2E26500FD3ABF /* GeoLite2-Country.mmdb in Resources */ = {isa = PBXBuildFile; fileRef = BBD0008D23C2E26500FD3ABF /* GeoLite2-Country.mmdb */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -555,6 +556,8 @@
 		36DB3CEE1E0D610500D907DB /* IPAddressSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IPAddressSpec.swift; sourceTree = "<group>"; };
 		36E44A011CF2ED4800185DBF /* TUNInterface.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TUNInterface.swift; sourceTree = "<group>"; };
 		36E9CCFE1DD6EEF5003597CE /* QueueFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = QueueFactory.swift; path = Tunnel/QueueFactory.swift; sourceTree = "<group>"; };
+		BBD0008D23C2E26500FD3ABF /* GeoLite2-Country.mmdb */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GeoLite2-Country.mmdb"; sourceTree = "<group>"; };
+		BBD0009223C2E60B00FD3ABF /* GeoLite2-Country.mmdb */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GeoLite2-Country.mmdb"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -742,6 +745,7 @@
 				3623472D1D7D45FD00A047DE /* test */,
 				3664F0C61CE37763008BA6D8 /* .swiftlint.yml */,
 				36A719ED1D63310400DC35F5 /* CHANGELOG.md */,
+				BBD0008D23C2E26500FD3ABF /* GeoLite2-Country.mmdb */,
 				36B1624A1CDDA13500F24C97 /* Cartfile */,
 				362347861D7EA2A500A047DE /* Cartfile.private */,
 				362347311D7D475100A047DE /* Cartfile.resolved */,
@@ -979,6 +983,7 @@
 		36C48D4E1CF88DED0071804F /* NEKit-iOS */ = {
 			isa = PBXGroup;
 			children = (
+				BBD0009223C2E60B00FD3ABF /* GeoLite2-Country.mmdb */,
 				36C48D511CF88DED0071804F /* Info.plist */,
 				36C48D4F1CF88DED0071804F /* NEKit-iOS.h */,
 			);
@@ -1302,6 +1307,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BBD0008E23C2E26500FD3ABF /* GeoLite2-Country.mmdb in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
